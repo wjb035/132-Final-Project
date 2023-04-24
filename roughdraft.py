@@ -27,6 +27,8 @@ global detergents
 detergents=[tide,percil,purex,seventhgeneration,surfexcel,all,gain,xtra,armandhammer]
 global detergentstr
 detergentstr=["tide","percil","purex","seventhgeneration","surfexcel","all","gain","xtra","a&h"]
+global weightdetected
+weightdetected=True
 class Text(Frame):
     def __init__(self,parent):
         Frame.__init__(self,parent)
@@ -94,12 +96,53 @@ class Interactable(Frame):
         settings=Button(window,text="Settings")
         settings.place(x=650,y=425)
     
+    
     def select(self,text):
-        if len(text) > 0:
+        if weightdetected==True:
+            datastat=f"Weight is detected on the weight sensor\nDetergent used: {text}"
+        else:
+            datastat=f"Weight is not detected on the weight sensor\nDetergent used: {text}"
+        if len(text) > 0 and "tide" not in text:
             self.recentadd(text)
-
+        #add clear button next to settings
+            self.detergenthelp=Frame(width=400,height=200)
+            self.detergenthelp.place(x=150,y=150)
+            self.header=Label(master=self.detergenthelp,text=datastat,font=("Times New Roman",12))
+            self.header.place(x=75,y=0)
         
+        if "tide" in text:
+            self.header.destroy()
+            self.detergenthelp.destroy() 
+            
+                #for widgets in detergenthelp.winfo_children():
+                    #widgets.pack_forget()
+    
+    @property
+    def detergenthelp(self):
+        return self._detergenthelp
+    
+    @detergenthelp.setter
+    def detergenthelp(self,value):
+        self._detergenthelp=value
+
+    @property
+    def popup(self):
+        return self._popup
+    
+    @popup.setter
+    def popup(self,value):
+        self._popup=value
+
+    @property
+    def header(self):
+        return self._header
+    @header.setter
+    def header(self,value):
+        self._header=value
+
     def recentadd(self,text):
+        if text in self.recentlist:
+            self.recentlist.remove(text)
         self.recentlist.insert(0,text)
         while len(self.recentlist) < 6:
             self.recentlist.append("")
